@@ -5,45 +5,42 @@ import {
     Switch,
     Route,
     NavLink,
+    Redirect,
 } from "react-router-dom";
 import Homepage from "./pages/Homepage";
 import LoginPage from "./pages/LoginPage";
 import BlogOverviewPage from "./pages/BlogOverviewPage";
 import BlogpostPage from "./pages/BlogpostPage";
+import Navigation from "./components/Navigation";
 
+function PrivateRoute({children, isAuth, ...rest}) {
+    return (
+        <Route {...rest}>
+            {isAuth ? children : <Redirect to="/login"/>}
+        </Route>
+    )
+}
 
 function App() {
     // We houden in de state bij of iemand is "ingelogd" (simpele versie)
     const [isAuthenticated, toggleIsAuthenticated] = useState(false);
-
+    console.log(isAuthenticated);
     return (
         <Router>
-            <nav>
-                <ul>
-                    <li>
-                        <NavLink className="nav-link" exact to="/">Homepage</NavLink>
-                    </li>
-                    <li>
-                        <NavLink className="nav-link" to="/login">Login</NavLink>
-                    </li>
-                    <li>
-                        <NavLink className="nav-link" to="/blogposts">Blog</NavLink>
-                    </li>
-                </ul>
-            </nav>
+            <Navigation isAuth={isAuthenticated} toggleAuth={toggleIsAuthenticated}/>
             <Switch>
                 <Route exact path="/">
                     <Homepage/>
                 </Route>
                 <Route path="/login">
-                    <LoginPage/>
+                    <LoginPage toggleLoggedIn={toggleIsAuthenticated}/>
                 </Route>
-                <Route path="/blogposts">
+                <PrivateRoute exact path="/blogposts" isAuth={isAuthenticated}>
                     <BlogOverviewPage/>
-                </Route>
-                <Route path="/blog/:blogId">
+                </PrivateRoute>
+                <PrivateRoute exact path="/blog/:blogId" isAuth={isAuthenticated}>
                     <BlogpostPage/>
-                </Route>
+                </PrivateRoute>
             </Switch>
 
         </Router>

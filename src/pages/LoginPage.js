@@ -1,16 +1,21 @@
 import React from 'react';
 import {
-    Link
+    useHistory
 } from "react-router-dom";
 
-function LoginPage(props) {
+function LoginPage({toggleLoggedIn}) {
+    const history = useHistory();
+
+    function signIn() {
+        toggleLoggedIn(true);
+        history.push("/");
+    }
+
     return (
         <div className="outer-container">
             <h1>Log hier in</h1>
             <p>Druk op de knop om in te loggen</p>
-            <Link to="/blogposts">
-                <button type="button">Login</button>
-            </Link>
+            <button onClick={signIn} type="button">Login</button>
         </div>
     );
 }
